@@ -1,12 +1,34 @@
-const {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-} = require("./contacts");
+const { program } = require("commander");
 
-const { Command } = require("commander");
-const program = new Command();
+const contacts = require("./contacts.js");
+
+const invokeAction = async ({ action, id, name, email, phone }) => {
+  switch (action) {
+    case "list":
+      const contactsList = await contacts.listContacts();
+      console.table(contactsList);
+      break;
+
+    case "get":
+      const getById = await contacts.getContactById(id);
+      console.log(getById);
+      break;
+
+    case "add":
+      const newContact = await contacts.addContact({ name, email, phone });
+      console.log(newContact);
+      break;
+
+    case "remove":
+      const removeById = await contacts.removeContact(id);
+      console.log(removeById);
+      break;
+
+    default:
+      console.warn("\x1B[31m Unknown action type!");
+  }
+};
+
 program
   .option("-a, --action <type>", "choose action")
   .option("-i, --id <type>", "user id")
@@ -14,43 +36,9 @@ program
   .option("-e, --email <type>", "user email")
   .option("-p, --phone <type>", "user phone");
 
-program.parse(process.argv);
+program.parse();
 
+const options = program.opts();
 (async () => {
-  const argv = program.opts();
-
-  async function invokeAction({ action, id, name, email, phone }) {
-    switch (action) {
-      case "list": {
-        const data = await listContacts();
-        console.table(data);
-        break;
-      }
-
-      case "get": {
-        const data = await getContactById(id);
-        console.table(data);
-        break;
-      }
-
-      case "add": {
-        await addContact(name, email, phone);
-        const data = await listContacts();
-        console.table(data);
-        break;
-      }
-
-      case "remove": {
-        await removeContact(id);
-        const data = await listContacts();
-        console.table(data);
-        break;
-      }
-
-      default:
-        console.warn("\x1B[31m Unknown action type!");
-    }
-  }
-
-  await invokeAction(argv);
+  await invokeAction(options);
 })();
