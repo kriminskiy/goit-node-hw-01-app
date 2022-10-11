@@ -1,1 +1,2 @@
-https://monosnap.com/file/XEgWgvAsRV85OhloVBQhMW6fcY76Gi
+все скрины в одном
+https://ibb.co/djjC50n
